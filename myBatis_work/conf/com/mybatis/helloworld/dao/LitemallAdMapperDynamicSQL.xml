@@ -88,5 +88,74 @@
 			</otherwise>
 		</choose>
 	</select>
+	
+	<!-- public List<LitemallAd> getLitemAdByIds(List<Integer> ids);  -->
+	<select id="getLitemAdByIds" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		<!-- select * from litemall_ad where id in(?,?,?)
+			select * from litemall_ad where id=? or id=? or id=?
+			<foreach>:
+				collection:指定要迭代的集合
+				item：当前从集合中迭代出的元素
+				open：指定一个开始字符
+				close:指定一个结束字符
+				separator: 元素与元素之间的分隔符
+		 -->
+		 select * from litemall_ad 
+		 where id in 
+	 	<foreach collection="ids" item="currId" open="(" close=" )" separator=",">
+	 		#{currId}
+	 	</foreach>
+	</select>
+	
+	
+	<!-- 批量添加 public void addAds(@Param("ads")List<LitemallAd> litemallAds);
+		 添加： insert into litemall_ad(x,x,x) values(?,?,?),(?,?,?),(?,?,?)
+		 删除：delete from litemall_ad where id in (?,?,?)
+		 
+		 修改：update litemall_ad set name=#{name}... where id = #{id}
+		 	  update litemall_ad set name=#{name}... where id = #{id}
+		 	  update litemall_ad set name=#{name}... where id = #{id}
+		 	  
+		默认情况下，JDBC不允许江多条SQL拼成一个字符串。
+		可以在连接的URL的后面可以加一个参数,示例：allwMultiQueries=true
+		jdbc:mysql://localhost:3306/litemall?useUnicode=true&characterEncoding=UTF-8&allwMultiQueries=true
+	 -->
+	<insert id="addAds">
+		insert into litemall_ad(name,link,url,position,content,start_time,end_time,enabled,add_time,update_time,deleted) 
+		values
+		<foreach collection="ads" item="ad" separator=",">
+		(#{ad.name},#{ad.link},#{ad.url},#{ad.position},#{ad.content},#{ad.startTime},#{ad.endTime},#{ad.enabled},#{ad.addTime},#{ad.updateTime},#{ad.deleted})
+		</foreach>
+	</insert>
+	
+	<!-- public void deleteAds(@Param("ids")List<Integer> ids); -->
+	<delete id="deleteAds">
+		delete from litemall_ad 
+		where id in 
+		<foreach collection="ids" item="currId" open="(" close=" )" separator=",">
+	 		#{currId}
+	 	</foreach>
+	</delete>
+	
+	<!-- public void updateAds(@Param("ads")List<LitemallAd> litemallAds); -->
+	<update id="updateAds">
+		<!-- <foreach collection="ads" item="ad"  separator=";">
+	 		update litemall_ad set name=#{ad.name} where id = #{ad.id}
+	 	</foreach> -->
+	 	
+        update litemall_ad
+	    set name = 
+	    <foreach collection="ads" item="ad"  separator=" "  open="case id" close="end">
+	        when #{ad.id} then #{ad.name}
+	    </foreach>
+	    ,content = 
+	    <foreach collection="ads" item="ad"  separator=" "  open="case id" close="end">
+	        when #{ad.id} then #{ad.content}
+	    </foreach>
+		where id in 
+		<foreach collection="ads" item="ad" open="(" close=")" separator=",">
+			#{ad.id}
+		</foreach>
+	</update>
 
 </mapper>
