@@ -27,8 +27,8 @@
 	 	  	如果有别名冲突的情况，可以使用@Alias()注解，为具体的类指定别名
 	   -->
 	 <typeAliases>
-	 	<!-- <typeAlias type="com.mybatis.helloworld.bean.LitemallAd" alias="litemallAd" /> -->
-	 	<package name="com.mybatis.helloworld.bean" />
+	 	<!-- <typeAlias type="com.mybatis.test.beans.Employee" alias="employee" /> -->
+	 	<package name="com.mybatis.test.bean" />
 	 </typeAliases>
 	 
 	<!-- 4.环境们
@@ -65,7 +65,7 @@
 	 					要求：SQL映射文件必须与Mapper接口同名同位置
 	  -->
 	<mappers>
-		<!-- <mapper resource="LitemallAdMapper.xml" /> -->
-		<package name="com.mybatis.helloworld.dao"/>
+		<!-- <mapper resource="EmployeeMapper.xml" /> -->
+		<package name="com.mybatis.test.dao"/>
 	</mappers>
 </configuration>

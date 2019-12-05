@@ -56,11 +56,6 @@
 				<property name="password" value="${jdbc.password}" />
 			</dataSource>
 		</environment>
-		
-		<environment id="test">
-			<transactionManager type=""></transactionManager>
-			<dataSource type=""></dataSource>
-		</environment>
 	</environments>
 	
 	 <!-- 5.引入SQL映射文件
