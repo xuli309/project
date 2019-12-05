@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatis.helloworld.dao.LitemallAdMapperResultMap">
+
+	<!-- public  LitemallAd getLitemAdById(Integer id);  -->
+	<select id="getLitemAdById" resultMap="myLiemalAd">
+		<include refid="selectLitemalAdSQL"></include> where id = #{id}
+	</select>
+	
+	<!-- 自定义映射
+		type: 最终结果集封装的类型
+		<id>：完成主键列的映射
+			column：指定结果集的列名
+			property：指定对象的属性名
+		<result>：完成普通列的映射
+	 -->
+	<resultMap type="com.mybatis.helloworld.bean.LitemallAd" id="myLiemalAd">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="link" property="link" />
+		<result column="position" property="position" />
+		<result column="content" property="content" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="enabled" property="enabled" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="deleted" property="deleted" />
+	</resultMap>
+	
+	<!-- public LitemallAd getLitemAdAndGoods(Integer id) -->
+	<select id="getLitemAdAndGoods" resultMap="myLitemAdAndGoods">
+		select t1.id aid,t1.name adname,t2.id gid, t2.name gname from litemall_ad t1, litemall_goods t2 where t1.id=t2.sort_order and  t1.id=#{id} limit 1
+	</select>
+	<resultMap type="com.mybatis.helloworld.bean.LitemallAd" id="myLitemAdAndGoods">
+		<id column="aid" property="id" />
+		<result column="aname" property="name" />
+		<!-- 级联
+		<result column="gid" property="litemallGoods.id" />
+		<result column="gname" property="litemallGoods.name" />
+		 -->
+		 
+		 <!-- 
+		 	association：完成关联，联合属性映射
+		 		property：指定联合属性
+		 -->
+		 <association property="litemallGoods" javaType="com.mybatis.helloworld.bean.LitemallGoods">
+		 	<result column="gid" property="id" />
+			<result column="gname" property="name" />
+		 </association>
+	</resultMap>
+	
+	 <!-- 
+	 	association：使用分步查询
+		需求：
+			 1：先通过产品排序查询出一条记录（这是做示例，两表其实没啥关系）
+			 2：再通过查询出来的内容中的外键(部门id)查询对应的广告信息. 
+	-->
+	<!-- public LitemallAd getLitemAdByIdStep(Integer id);  -->
+	<select id="getLitemAdByIdStep" resultMap="myAdAndGoods">
+		select * from litemall_ad where id=#{id}
+	</select>
+	<resultMap type="com.mybatis.helloworld.bean.LitemallAd" id="myAdAndGoods">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="link" property="link" />
+		<result column="position" property="position" />
+		<result column="content" property="content" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="enabled" property="enabled" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="deleted" property="deleted" />
+		<!-- 分步查询 -->
+		<association property="litemallGoods" 
+					 select="com.mybatis.helloworld.dao.LitemallGoodsMapperResultMap.getLitemGoodsById"
+					 column="id">
+		</association>
+	</resultMap>
+	
+	 <!-- 
+	 	association：分步查询使用延迟加载
+	 	<setting name="lazyLoadingEnabled" value="true" />
+	 	<setting name="aggressiveLazyLoading" value="false" />
+	 -->
+	 
+	 <!-- public List<LitemallAd> getLitemAdByGid(Integer gid);  -->
+	 <select id="getLitemAdByGid" resultType="com.mybatis.helloworld.bean.LitemallAd">
+	 	select * from litemall_ad where id=#{id}
+	 </select>
+	
+	<!-- 抽取可重用的SQL片段 -->
+	<sql id="selectLitemalAdSQL">
+		select * from litemall_ad
+	</sql>
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatis.helloworld.dao.LitemallGoodsMapperResultMap">
+
+	<!-- public  LitemallAd getLitemGoodsById(Integer id);   -->
+	<select id="getLitemGoodsById" resultMap="myLiemalGoods">
+		select * from litemall_goods where sort_order = #{id} limit 1
+	</select>
+	<resultMap type="com.mybatis.helloworld.bean.LitemallGoods" id="myLiemalGoods">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+	</resultMap>
+
+
+	<!-- public LitemallGoods getGoodsAndAd(Integer id) -->
+	<select id="getGoodsAndAd"  resultMap="myGAndA">
+		select * from litemall_goods g left join litemall_ad a on g.sort_order=a.id where g.id=#{id};
+	</select>
+	<resultMap type="com.mybatis.helloworld.bean.LitemallGoods" id="myGAndA">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<!-- collection: 完成集合类型的联合属性的映射
+				property：指定联合属性
+				ofType：指定集合中元素的类型
+		 -->
+		<collection property="goodsList" ofType="com.mybatis.helloworld.bean.LitemallAd">
+			<id column="id" property="id" />
+			<result column="name" property="name" />
+		</collection>
+	</resultMap>
+	
+	<!-- collection:分步查询
+			需求：查询部门信息，并且查询部门下所有员工信息
+				1.先根据部门的id查询部门的信息
+				2.再根据部门的id作为员工的外键 查询所有员工的信息			
+	-->
+	
+	<!-- public LitemallGoods getGoodsAndAdStep(Integer id); -->
+	<select id="getGoodsAndAdStep" resultMap="myGoodsAndAdStep">
+		select * from litemall_goods where sort_order = #{id} limit 1
+	</select>
+	<resultMap type="com.mybatis.helloworld.bean.LitemallGoods" id="myGoodsAndAdStep">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<collection property="goodsList" 
+					select="com.mybatis.helloworld.dao.LitemallAdMapperResultMap.getLitemAdByGid"
+					column="id"><!-- 多个参数用map 示例：colum="{id=id,k2=v2}" -->
+		</collection>
+	</resultMap>
+	
+</mapper>

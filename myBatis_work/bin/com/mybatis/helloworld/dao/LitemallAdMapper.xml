@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatis.helloworld.dao.LitemallAdMapper">
+	<select id="selectLitemallAd" resultType="com.mybatis.helloworld.bean.LitemallAd">
+			select id,name,link,url,position,content,start_time as startTime,end_time endTime, enabled, add_time addTime,update_time updateTime, deleted from litemall_ad where id = #{id}
+	</select>
+	
+	<select id="getLitemAdById"  resultType="litemallad">
+		<!-- select id,name,link,url,position,content,start_time as startTime,end_time endTime, enabled, add_time addTime,update_time updateTime, deleted from litemall_ad where id = #{id} -->
+		select * from litemall_ad where id = #{id} 
+	</select>
+	
+	<!-- public void addLitemallAd(LitemallAd litemallAd); 
+		parameterType：指定参数类型，可以省略不配置。
+		
+		useGeneratedKeys:告诉Mybatis使用主键自增的方式
+		keyProperty ：指定保存Mybatis返回的主键值
+		
+		LitemallAd(Integer id, String name, String link, String url, Integer position, String content,
+			Date startTime, Date endTime, int enabled, Date addTime, Date updateTime, Integer deleted)
+	-->
+	<insert id="addLitemallAd" parameterType="com.mybatis.helloworld.bean.LitemallAd"
+		useGeneratedKeys="true" keyProperty="id"	>
+		insert into litemall_ad(name,link,url,position,content,start_time,end_time,enabled,add_time,update_time,deleted) 
+		values(#{name},#{link},#{url},#{position},#{content},#{startTime},#{endTime},#{enabled},#{addTime},#{updateTime},#{deleted})
+	</insert>
+	
+	
+	<!-- public void updateLitemallAd(LitemallAd litemallAd); -->
+	<update id="updateLitemallAd">
+		update litemall_ad set name=#{name} where id=#{id}
+	</update>
+	
+	<!-- public void deleteLitemallAd(Integer id); -->
+	<delete id="deleteLitemallAd">
+		delete from litemall_ad where id=#{id}
+	</delete>
+	
+	<!-- public  LitemallAd findLitemAd(Integer id,String name);  -->
+	<select id="findLitemAd" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select * from litemall_ad where id=#{id} and name=#{name}
+	</select>
+	
+	<!-- 	public LitemallAd findLitemAdByMap(Map<String, Object> map);  -->
+	<!-- <select id="findLitemAdByMap" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select * from litemall_ad where id=#{id} and name=#{name}
+	</select> -->
+	
+	<select id="findLitemAdByMap" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select * from litemall_ad where id=${id} and name=#{name}
+	</select>
+	
+	<!-- public List<LitemallAd> findLitemallAdList() -->
+	<select id="findLitemallAdList" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select * from litemall_ad
+	</select>
+	
+	<!-- public Map<String,Object> getLitemallAdByIdReturnMap(Integer id); -->
+	<select id="getLitemallAdByIdReturnMap" resultType="map">
+		select * from litemall_ad where id = #{id} 
+	</select>
+	
+	<!-- public Map<Integer,LitemallAd>  getAllLitemallsReturnMap(); -->
+	<select id="getAllLitemallsReturnMap" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select * from litemall_ad
+	</select>
+	
+</mapper>

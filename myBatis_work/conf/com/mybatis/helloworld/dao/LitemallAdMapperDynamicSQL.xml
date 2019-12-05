@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatis.helloworld.dao.LitemallAdMapperDynamicSQL">
+
+	<!-- public List<LitemallAd> getLitemAdByConditionIfWhere(LitemallAd litemallAd); -->
+	<select id="getLitemAdByConditionIfWhere" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select id,name,content,deleted from litemall_ad 
+		<!-- where 1=1 -->
+		<where><!-- 用于解决SQL语句中where关键字以及条件中第一个and或者or的问题  -->
+			<if test="id!=null">
+				and id = #{id}
+			</if>
+			<if test="name!=null&amp;&amp;name!=&quot;&quot;">
+				and name = #{name}
+			</if>
+			<if test="content!=null and content.trim()!=''">
+				and content = #{content}
+			</if>
+			<if test="deleted==0 or deleted==1">
+				and deleted = #{deleted}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- public List<LitemallAd> getLitemAdByConditionTrim(LitemallAd litemallAd); -->
+	<select id="getLitemAdByConditionTrim" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select id,name,content,deleted from litemall_ad 
+		<!-- where 1=1 -->
+		<!-- <trim>:可以嵌套
+				prefix: 添加前缀
+				prefixOverrides: 覆盖/去掉前缀
+				suffix: 添加后缀
+				suffixOverrides: 覆盖/去掉后缀
+		-->
+		<trim prefix="where" suffixOverrides="and|or">
+			<if test="id!=null">
+				id = #{id} and 
+			</if>
+			<if test="name!=null&amp;&amp;name!=&quot;&quot;">
+				name = #{name} and 
+			</if>
+			<if test="content!=null and content.trim()!=''">
+				content = #{content} and 
+			</if>
+			<if test="deleted==0 or deleted==1">
+				deleted = #{deleted}
+			</if>
+		</trim>
+	</select>
+	
+	<!-- public void updateLitemAdConditionSet(LitemallAd litemallAd);  -->
+	<update id="updateLitemAdConditionSet" >
+		update litemall_ad
+		<set>
+			<if test="name!=null&amp;&amp;name!=&quot;&quot;">
+				name = #{name},
+			</if>
+			<if test="content!=null and content.trim()!=''">
+				content = #{content}, 
+			</if>
+			<if test="deleted==0 or deleted==1">
+				deleted = #{deleted}
+			</if>
+		</set>	
+		where id = #{id}
+		
+	</update>
+	
+	
+	<!-- public List<LitemallAd> getLitemAdByConditionChoose(LitemallAd litemallAd); -->
+	<select id="getLitemAdByConditionChoose" resultType="com.mybatis.helloworld.bean.LitemallAd">
+		select id,name,content,deleted from litemall_ad 
+		where
+		<choose>
+			<when test="id!=null">
+				id = #{id}
+			</when>
+			<when test="name!=null&amp;&amp;name!=&quot;&quot;">
+				name = #{name}
+			</when>
+			<when test="content!=null and content.trim()!=''">
+				content = #{content}
+			</when>
+			<otherwise>
+				deleted = #{deleted}
+			</otherwise>
+		</choose>
+	</select>
+
+</mapper>
